@@ -4,6 +4,18 @@ All notable changes to **dsh-panda-calendar** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Release & marketplace compliance**: added `screenshots.json` (storefront screenshot declaration pointing at `assets/preview-*.jpg`) and `CHANGELOG.en.md` (the docs set is now bilingual end to end); added a GitHub Actions `test` workflow that runs the 64 unit tests on every push and PR (zero dependencies, no install step).
+- **Short-lived weather cache**: `PandaWeather.fetchWeather` keeps the last 10 minutes of results in localStorage (keyed by rounded lat/lon + forecast days), so re-opening the tab or switching cities does not re-hit the network; the view serves the first load from cache, and the manual refresh forces fresh data.
+- **Geo lookups follow the UI language**: `searchCity` / `reverseGeocode` / `locateByIp` / `locateCurrentCity` accept `opts.lang` (default zh, unchanged), and the view passes the active UI language — English UIs now get English city/country names from Open-Meteo / BigDataCloud / ip-api instead of hard-coded Chinese.
+
+### Tests
+
+- Added 8 weather tests (64 total): `lang` forwarding with zh defaults unchanged, cache hit without network, expired-entry refetch, `force` bypass, write-back after success, and safe operation without storage.
+
 ## [1.1.0] - 2026-09-03
 
 ### Changed

@@ -4,6 +4,18 @@ All notable changes to **dsh-panda-calendar** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **发布与市场合规**：新增 `screenshots.json`（市场详情页截图声明，指向 `assets/preview-*.jpg`）与 `CHANGELOG.en.md`（英文变更日志，文档集达成中英对等）；新增 GitHub Actions `test` workflow（push / PR 自动跑 64 项单测，零依赖零安装步骤）。
+- **天气短期缓存**：`PandaWeather.fetchWeather` 将最近 10 分钟的结果写入 localStorage（键按取整 lat/lon + 预报天数），再次打开标签页或切换城市不重复请求；视图首次加载可用缓存，「手动刷新」强制绕缓存取新数据。
+- **地理查询语言跟随 UI**：`searchCity` / `reverseGeocode` / `locateByIp` / `locateCurrentCity` 新增 `opts.lang`（默认 zh 行为不变），视图按当前界面语言传入——英文界面下 Open-Meteo / BigDataCloud / ip-api 返回英文城市与国家名，不再硬编码中文。
+
+### Tests
+
+- 新增 8 项 weather 测试（共 64）：`lang` 透传与 zh 默认不变、缓存命中不联网、过期重取、`force` 绕过、成功回写、无 storage 环境安全。
+
 ## [1.1.0] - 2026-09-03
 
 ### Changed
