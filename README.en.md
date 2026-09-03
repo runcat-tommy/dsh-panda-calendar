@@ -2,6 +2,8 @@
 
 A **token-free calendar & weather plugin** for DeepSeek Harness Web. Adds a **"Panda Calendar (熊猫日历)"** tab to the session header (next to 对话/Chat, Trajectory and 诗词/Poetry, right after Poetry), giving you **solar/lunar dates, ganzhi, Chinese zodiac, solar terms, festivals, China public holidays (incl. make-up workdays) and multi-city weather** in one place.
 
+<p align="center"><img src="https://raw.githubusercontent.com/runcat-tommy/dsh-panda-calendar/main/assets/preview-en.jpg" alt="Panda Calendar preview" width="85%"></p>
+
 - Lunar engine: built-in offline data tables for **1900–2100**, generated from and validated day-by-day against [lunar-javascript](https://github.com/6tail/lunar-javascript) (6tail, MIT) — works offline, **no API key**
 - Public holidays: free public feed [holiday-cn](https://github.com/imldres/holiday-cn) (MIT, based on State Council announcements) with built-in **2025/2026 snapshots** plus rule-based fallback
 - Weather / geolocation: Open-Meteo (current + 3-day), BigDataCloud reverse geocoding, ip-api.com fallback — all free, no sign-up, no API key

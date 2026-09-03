@@ -4,26 +4,19 @@ All notable changes to **dsh-panda-calendar** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0] - 2026-09-03
 
-### Added (M0–M5 implementation complete)
+### Changed
 
-- **Fix: 上月/下月 unresponsive on first visit**
-  - `useViewState` now seeds the module-level `VIEW_CACHE` with the initial value during `useState` initialisation, so functional updates (`setView(v => …)`) always have a base value even before the first explicit set. Previously the first click on 上月/下月 read `undefined` and threw; clicking 今日 (a non-functional set) wrote the cache first, which masked the bug.
+- README.md / README.en.md：标题下新增插件界面预览图（`assets/preview-zh.jpg`、`assets/preview-en.jpg`；以 GitHub raw 链接引用，GitHub 与 npm 页面均可见）。
+- `package.json`：补充 `repository`（https://github.com/runcat-tommy/dsh-panda-calendar）。
+- GitHub 仓库详情：完善 Description 与 Topics（含 `dsh-plugin` 等 DSH 插件生态主题）。
 
-- **Persist user city list + active city (survives plugin update / reinstall)**
-  - New `PandaWeather.loadCityState` / `saveCityState`: a single versioned localStorage record `pandaCalendar.cities.v1` = `{ list, active }` (key scoped to the browser origin, so it outlives npm reinstall/update of the plugin).
-  - View boots by restoring the saved list first; only falls back to geolocation → ip-api → default cities when nothing is stored.
-  - Every mutation persists: locate `finished`, `addCityResult`, `removeCity`.
-  - Corrupt / foreign data degrades to null (caller falls back to defaults), never crashes; invalid entries and a stale `active` are sanitised on write/read.
+### 发布
 
-- **Manual locate button (③)**
-  - New `PandaWeather.locateCurrentCity` (geolocation → reverse geocode, ip-api fallback; `fetchImpl`/`geolocation` injectable for tests).
-  - Weather card (both the auto-locating and the active-city branch) now shows a 「📍 定位」 button: click it to re-run locate-on-demand, put the located city first, switch to it, persist and refresh.
+- 完成插件公开发布：代码推送 GitHub + 发布 npm `v1.1.0`（0.1.0 为首发试运行版，本次补齐公开仓库元信息与预览图后正式走发布流程）。
 
-- **Plain-language "update holiday data" hint with copy button (①②)**
-  - When the built-in snapshot does not yet cover **next year** (the government may have published it already), the view shows a short hint in plain Chinese/English: copy `node tools/gen-holiday-snapshot.mjs` with one click, run it in a terminal, then restart dsh web to apply.
-  - Pure predicate `PandaStatutory.snapshotHasYear(year)` drives the hint; `copyTextToClipboard` prefers the Clipboard API with an `execCommand` fallback. The hint disappears automatically once the year is built in.
+## [0.1.0] - 2026-09-03
 
 ### Added (M0–M5 implementation complete)
 
@@ -57,3 +50,13 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - `docs/01` feasibility, `02` Q&A, `03` initial design, `04` final design/implementation memo.
   - Reproducible generators: `tools/gen-engine-data.mjs` (engine tables + fixtures), `tools/inject-tables.mjs`, `tools/gen-holiday-snapshot.mjs`.
   - README.md / README.en.md / CHANGELOG.md / LICENSE (MIT).
+
+### Fixed
+
+- **上月/下月 unresponsive on first visit**: `useViewState` now seeds the module-level `VIEW_CACHE` with the initial value during `useState` initialisation, so functional updates (`setView(v => …)`) always have a base value even before the first explicit set.
+
+### Added (0.1.0 后置增强，随 0.1.0 一并发布)
+
+- **Persist user city list + active city (survives plugin update / reinstall)**: `PandaWeather.loadCityState` / `saveCityState` on a single versioned localStorage record `pandaCalendar.cities.v1` = `{ list, active }`; view restores it on boot and persists on locate/add/remove; corrupt data degrades to null.
+- **Manual locate button**: `PandaWeather.locateCurrentCity` (geolocation → reverse geocode, ip-api fallback); weather card offers 「📍 定位」 in both branches — locates, puts the city first, activates, persists and refreshes.
+- **Plain-language "update holiday data" hint with copy button**: when the built-in snapshot lacks next year, the view shows a short hint with a copy-to-clipboard button for `node tools/gen-holiday-snapshot.mjs` and a "restart dsh web" reminder; driven by the pure predicate `PandaStatutory.snapshotHasYear(year)`.

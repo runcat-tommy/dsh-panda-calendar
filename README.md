@@ -2,6 +2,8 @@
 
 DeepSeek Harness Web 的**免 token 日历与天气插件**：在会话页头新增「熊猫日历」标签页（与「对话」「轨迹」「诗词」同级，排在诗词之后），一站式提供 **公历 / 农历 / 干支 / 生肖 / 节气 / 节日 / 中国法定节假日（含调休）/ 多城市天气**。
 
+<p align="center"><img src="https://raw.githubusercontent.com/runcat-tommy/dsh-panda-calendar/main/assets/preview-zh.jpg" alt="熊猫日历 界面预览" width="85%"></p>
+
 - 农历引擎：内置 1900–2100 离线算法数据表（由 [lunar-javascript](https://github.com/6tail/lunar-javascript)（6tail，MIT）生成并逐日校验），**断网也可用**，无需任何 API Key
 - 法定节假日：免费公共数据源 [holiday-cn](https://github.com/imldres/holiday-cn)（MIT，依据国务院公告），带 **2025 / 2026 内置快照**与规则兜底
 - 天气 / 定位：Open-Meteo（实时 + 3 天预报）、BigDataCloud 逆地理编码、ip-api.com 兜底——全部免费、无需注册、无 API Key
