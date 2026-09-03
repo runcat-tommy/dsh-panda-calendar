@@ -1,0 +1,63 @@
+{
+  "name": "dsh-panda-calendar",
+  "description": "Global Chinese calendar & weather for DeepSeek Harness Web: a '熊猫日历' conversation-view tab (next to 对话/轨迹) with solar/lunar dates, ganzhi/zodiac, solar terms, traditional & international festivals, China public holidays (incl. 调休 workdays), and multi-city weather — free data sources, no API key. 熊猫日历：会话页头新增「熊猫日历」标签页，公历/农历/干支/生肖/节气、中国传统与国际通用节日、中国法定节假日（含调休）、多城市天气；全部数据源免费、无需 API Key。",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "lib/index.js",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "calendar",
+    "lunar",
+    "lunar-calendar",
+    "chinese-calendar",
+    "holiday",
+    "weather",
+    "农历",
+    "日历",
+    "节假日",
+    "天气"
+  ],
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-slots",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    },
+    "marketplace": {
+      "profiles": ["web"],
+      "requiresBuildApproval": false,
+      "requiresRestart": true,
+      "manualSteps": false
+    }
+  },
+  "files": [
+    "cordis.patch.yml",
+    "lib",
+    "LICENSE",
+    "README.md",
+    "README.en.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "license": "MIT"
+}

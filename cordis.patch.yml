@@ -1,0 +1,7 @@
+# dsh-panda-calendar bundle patch: contributes one profile row.
+# The node half (lib/index.js) is a no-op host; the browser half ships via
+# exports["./client"] and the package.json `dsh.client` declaration.
+
+- insert:
+    - id: dsh-panda-calendar
+      name: 'dsh-panda-calendar'
