@@ -9,6 +9,7 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Changed
 
 - README.md / README.en.md：标题下新增插件界面预览图（`assets/preview-zh.jpg`、`assets/preview-en.jpg`；以 GitHub raw 链接引用，GitHub 与 npm 页面均可见）。
+- README.md / README.en.md：顶部新增「简体中文 / English」语言切换栏，仓库主页默认显示中文版，英文全文在 `README.en.md` 一键可达。
 - `package.json`：补充 `repository`（https://github.com/runcat-tommy/dsh-panda-calendar）。
 - GitHub 仓库详情：完善 Description 与 Topics（含 `dsh-plugin` 等 DSH 插件生态主题）。
 

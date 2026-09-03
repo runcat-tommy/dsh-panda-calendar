@@ -1,5 +1,10 @@
 # dsh-panda-calendar
 
+<p align="center">
+  <a href="https://github.com/runcat-tommy/dsh-panda-calendar/blob/main/README.md"><strong>简体中文</strong></a> · 
+  <a href="https://github.com/runcat-tommy/dsh-panda-calendar/blob/main/README.en.md"><strong>English</strong></a>
+</p>
+
 A **token-free calendar & weather plugin** for DeepSeek Harness Web. Adds a **"Panda Calendar (熊猫日历)"** tab to the session header (next to 对话/Chat, Trajectory and 诗词/Poetry, right after Poetry), giving you **solar/lunar dates, ganzhi, Chinese zodiac, solar terms, festivals, China public holidays (incl. make-up workdays) and multi-city weather** in one place.
 
 <p align="center"><img src="https://raw.githubusercontent.com/runcat-tommy/dsh-panda-calendar/main/assets/preview-en.jpg" alt="Panda Calendar preview" width="85%"></p>
@@ -9,8 +14,6 @@ A **token-free calendar & weather plugin** for DeepSeek Harness Web. Adds a **"P
 - Weather / geolocation: Open-Meteo (current + 3-day), BigDataCloud reverse geocoding, ip-api.com fallback — all free, no sign-up, no API key
 - Pure front-end (no backend); state stays local
 - Requires a `dsh web` build that supports client plugins (same mechanism as dsh-chinese-poetry)
-
-中文文档：[README.md](README.md)
 
 ## Features
 

@@ -1,5 +1,10 @@
 # dsh-panda-calendar
 
+<p align="center">
+  <a href="https://github.com/runcat-tommy/dsh-panda-calendar/blob/main/README.md"><strong>简体中文</strong></a> · 
+  <a href="https://github.com/runcat-tommy/dsh-panda-calendar/blob/main/README.en.md"><strong>English</strong></a>
+</p>
+
 DeepSeek Harness Web 的**免 token 日历与天气插件**：在会话页头新增「熊猫日历」标签页（与「对话」「轨迹」「诗词」同级，排在诗词之后），一站式提供 **公历 / 农历 / 干支 / 生肖 / 节气 / 节日 / 中国法定节假日（含调休）/ 多城市天气**。
 
 <p align="center"><img src="https://raw.githubusercontent.com/runcat-tommy/dsh-panda-calendar/main/assets/preview-zh.jpg" alt="熊猫日历 界面预览" width="85%"></p>
@@ -9,8 +14,6 @@ DeepSeek Harness Web 的**免 token 日历与天气插件**：在会话页头新
 - 天气 / 定位：Open-Meteo（实时 + 3 天预报）、BigDataCloud 逆地理编码、ip-api.com 兜底——全部免费、无需注册、无 API Key
 - 纯前端实现（无后端）；收藏与状态均本地保存
 - 要求：`dsh web` 支持 client-plugin 的版本（与 dsh-chinese-poetry 同机制）
-
-English: [README.en.md](README.en.md)
 
 ## 功能
 
