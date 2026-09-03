@@ -255,3 +255,117 @@ test("locateCurrentCity: no geolocation and no fetch -> null", async () => {
   const miss = await W.locateCurrentCity({ geolocation: geoOk(1, 2), fetchImpl });
   assert.equal(miss, null);
 });
+
+// ---- language of geo/weather lookups follows the UI (opts.lang) ----
+
+test("searchCity forwards the requested language to Open-Meteo", async () => {
+  const seen = [];
+  const geo = { results: [{ name: "Shanghai", admin1: "Shanghai", country: "China", latitude: 31.23, longitude: 121.47 }] };
+  const out = await W.searchCity("shanghai", {
+    fetchImpl: (u) => { seen.push(u); return Promise.resolve(okJson(geo)); },
+    lang: "en",
+  });
+  assert.equal(out[0].name, "Shanghai");
+  assert.ok(seen[0].includes("language=en"), `expected language=en in ${seen[0]}`);
+});
+
+test("reverseGeocode + locateByIp forward lang=en and keep zh defaults", async () => {
+  const urls = [];
+  const fetchImpl = (u) => {
+    urls.push(u);
+    if (u.includes("bigdatacloud.net")) return Promise.resolve(okJson({ city: "Suzhou", countryName: "China", latitude: 31.3, longitude: 120.6 }));
+    return Promise.resolve(okJson(ipPayload));
+  };
+  const rc = await W.reverseGeocode(31.3, 120.6, { fetchImpl, lang: "en" });
+  assert.equal(rc.city, "Suzhou");
+  const ip = await W.locateByIp({ fetchImpl, lang: "en" });
+  assert.ok(ip.city);
+  assert.ok(urls[0].includes("localityLanguage=en"), `expected localityLanguage=en in ${urls[0]}`);
+  assert.ok(urls[1].includes("lang=en"), `expected lang=en in ${urls[1]}`);
+  // zh default unchanged: existing tests cover zh behaviour via payloads;
+  // here we assert the URL still carries the zh parameter.
+  const zhUrls = [];
+  const zhFetch = (u) => { zhUrls.push(u); return Promise.resolve(okJson(ipPayload)); };
+  await W.locateByIp({ fetchImpl: zhFetch });
+  assert.ok(zhUrls[0].includes("lang=zh-CN"), `default should stay zh-CN in ${zhUrls[0]}`);
+});
+
+test("locateCurrentCity forwards lang to reverse geocode", async () => {
+  const urls = [];
+  const fetchImpl = (u) => {
+    urls.push(u);
+    return Promise.resolve(okJson({ city: "Suzhou", countryName: "China", latitude: 31.2989, longitude: 120.5853 }));
+  };
+  const hit = await W.locateCurrentCity({ geolocation: geoOk(31.2, 120.5), fetchImpl, lang: "en" });
+  assert.ok(hit && hit.name === "Suzhou");
+  assert.ok(urls[0].includes("localityLanguage=en"), "locateCurrentCity should pass lang=en through");
+});
+
+// ---- weather short-lived localStorage cache ----
+
+function seedWeatherCache(storage, lat, lon, data) {
+  const key = "pandaCalendar.weather." + (Math.round(lat * 10000) / 10000) + "," + (Math.round(lon * 10000) / 10000) + ".3";
+  storage.setItem(key, JSON.stringify({ ts: Date.now() - 60 * 1000, data }));
+}
+
+test("fetchWeather serves a fresh cache hit without calling the network", async () => {
+  const st = memStorage();
+  const cached = W.normalizeForecast(sampleForecast);
+  seedWeatherCache(st, 39.9042, 116.4074, cached);
+  let called = false;
+  const out = await W.fetchWeather(39.9042, 116.4074, {
+    fetchImpl: () => { called = true; return Promise.resolve(okJson(sampleForecast)); },
+    storage: st,
+  });
+  assert.equal(called, false, "cache hit must not hit the network");
+  assert.equal(out.current.temp, 30.2);
+});
+
+test("fetchWeather falls back to the network on expired/absent cache and writes back", async () => {
+  const st = memStorage();
+  const out = await W.fetchWeather(31.23, 121.47, {
+    fetchImpl: () => Promise.resolve(okJson(sampleForecast)),
+    storage: st,
+  });
+  assert.ok(out, "network path should resolve data");
+  const key = "pandaCalendar.weather." + (Math.round(31.23 * 10000) / 10000) + "," + (Math.round(121.47 * 10000) / 10000) + ".3";
+  const raw = st.getItem(key);
+  assert.ok(raw, "a successful fetch should populate the cache");
+  const rec = JSON.parse(raw);
+  assert.ok(rec.ts && rec.data.current.temp === 30.2);
+});
+
+test("fetchWeather ignores an expired cache entry (older than 10 min)", async () => {
+  const st = memStorage();
+  const key = "pandaCalendar.weather.39.9042,116.4074.3";
+  st.setItem(key, JSON.stringify({ ts: Date.now() - 11 * 60 * 1000, data: { stale: true } }));
+  let called = false;
+  const out = await W.fetchWeather(39.9042, 116.4074, {
+    fetchImpl: () => { called = true; return Promise.resolve(okJson(sampleForecast)); },
+    storage: st,
+  });
+  assert.equal(called, true, "expired entry should be refetched");
+  assert.equal(out.stale, undefined);
+});
+
+test("fetchWeather force:true bypasses a fresh cache entry", async () => {
+  const st = memStorage();
+  seedWeatherCache(st, 39.9042, 116.4074, W.normalizeForecast(sampleForecast));
+  let calls = 0;
+  const out = await W.fetchWeather(39.9042, 116.4074, {
+    fetchImpl: () => { calls++; return Promise.resolve(okJson(sampleForecast)); },
+    storage: st,
+    force: true,
+  });
+  assert.equal(calls, 1, "force must hit the network even with a fresh cache");
+  assert.ok(out);
+});
+
+test("fetchWeather without storage still fetches (Node/test-safe)", async () => {
+  let calls = 0;
+  const out = await W.fetchWeather(39.9, 116.4, {
+    fetchImpl: () => { calls++; return Promise.resolve(okJson(sampleForecast)); },
+  });
+  assert.equal(calls, 1);
+  assert.ok(out);
+});
