@@ -29,6 +29,10 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Added 3 tests (67 total): `isRestDayCell` semantics (weekends and statutory off-days are rest, makeup workdays are not), the today card's two-column structure, and rest-day classification over the month grid.
 - Added 8 weather tests (64 total): `lang` forwarding with zh defaults unchanged, cache hit without network, expired-entry refetch, `force` bypass, write-back after success, and safe operation without storage.
 
+### Release
+
+- Public release completed: code pushed to GitHub + `v1.2.0` published on npm (the "On this day" history release).
+
 ## [1.1.0] - 2026-09-03
 
 ### Changed

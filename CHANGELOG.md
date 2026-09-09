@@ -29,6 +29,9 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - 新增 3 项（共 67）：`isRestDayCell` 语义（周末与法定 off 为休、调休上班不算休）、今日卡两栏结构、网格休息日判定一致。
 - 新增 8 项 weather 测试（共 64）：`lang` 透传与 zh 默认不变、缓存命中不联网、过期重取、`force` 绕过、成功回写、无 storage 环境安全。
 
+### 发布
+
+- 完成插件公开发布：代码推送 GitHub + 发布 npm `v1.2.0`（「历史上的今天」功能版）。
 
 ## [1.1.0] - 2026-09-03
 
