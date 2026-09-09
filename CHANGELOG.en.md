@@ -16,6 +16,19 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - Added 8 weather tests (64 total): `lang` forwarding with zh defaults unchanged, cache hit without network, expired-entry refetch, `force` bypass, write-back after success, and safe operation without storage.
 
+## [Unreleased]
+
+### Changed
+
+- **Compact "today" card**: the body is now a two-column grid (large date + lunar info on the left; festival/solar-term tags, holiday/makeup note and action buttons on the right), so wide cards no longer waste the right side; narrow screens (≤560px) collapse back to a single column.
+- **Bigger calendar type**: day numbers 14→17px, weekday header 11→12px, lunar/festival sub-labels 10→11px and taller cells (58→68px).
+- **Clearer weekend/holiday contrast**: statutory off-days and real weekends (Sat/Sun that are not makeup workdays) get a soft red tint with a bolder day number; makeup workdays (e.g. a compensated Saturday) keep the plain workday look (grey 班 mark, no tint) so they are not misleading.
+- **Fixed Saturday/solar-term colors**: switched to the theme's `business` palette that actually exists at runtime (the previously used `state-info-*` variables are undefined in the host theme, so the Saturday blue had never rendered — the direct reason weekends were hard to tell apart from workdays).
+
+### Tests
+
+- Added 3 tests (67 total): `isRestDayCell` semantics (weekends and statutory off-days are rest, makeup workdays are not), the today card's two-column structure, and rest-day classification over the month grid.
+
 ## [1.1.0] - 2026-09-03
 
 ### Changed

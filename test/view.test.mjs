@@ -398,3 +398,71 @@ test("weather card offers a manual locate button in both branches", () => {
     else globalThis.localStorage = realLS;
   }
 });
+
+// ---- UI density + rest-day tint ----
+
+function cellOf(cells, key) {
+  return cells.find((c) => c.key === key);
+}
+
+test("isRestDayCell: weekends and off-days are rest; makeup workdays are not", () => {
+  const cells = U.monthCells(2026, 9, { today: { y: 2026, m: 9, d: 3 }, statData: stat2026 });
+  // Sat 2026-09-05: ordinary weekend -> rest
+  assert.equal(U.isRestDayCell(cellOf(cells, "2026-09-05")), true);
+  // Sun 2026-09-06: weekend -> rest
+  assert.equal(U.isRestDayCell(cellOf(cells, "2026-09-06")), true);
+  // Mon 2026-09-07: workday -> not rest
+  assert.equal(U.isRestDayCell(cellOf(cells, "2026-09-07")), false);
+  // 中秋 2026-09-25 (Friday, statutory off) -> rest
+  assert.equal(U.isRestDayCell(cellOf(cells, "2026-09-25")), true);
+  // 2026-10-10 Saturday is a makeup workday -> NOT rest
+  const oct = U.monthCells(2026, 10, { today: { y: 2026, m: 10, d: 1 }, statData: stat2026 });
+  assert.equal(U.isRestDayCell(cellOf(oct, "2026-10-10")), false);
+  // null-safe
+  assert.equal(U.isRestDayCell(null), false);
+});
+
+test("render: today body uses a two-column grid (hero + side)", () => {
+  const counters = { localeRegister: 0, injectCalls: [] };
+  const registrations = [];
+  const ctx = {
+    get: () => undefined,
+    on: () => () => {},
+    effect: () => () => {},
+    locale: {
+      register: () => { counters.localeRegister++; },
+      bind: () => (key) => `L:${key}`,
+    },
+    slots: {
+      inject: (name, cb) => { counters.injectCalls.push(name); registrations.push(cb()); },
+      register: (def, render) => ({ def, render }),
+    },
+  };
+  exp.apply(ctx);
+  const viewReg = registrations.find((r) => r.def && r.def.name === "conversation.view");
+  exp.__react._resetHooks();
+  const elem = viewReg.render({ sessionId: "today-grid", inputActions: null });
+  const tree = elem.type(elem.props || {});
+  const body = findEl(tree, (n) => n.props && String(n.props.className || "").indexOf("pc-today-body") === 0);
+  assert.ok(body, ".pc-today-body expected");
+  const grid = findEl(body, (n) => n.props && String(n.props.className || "").indexOf("pc-today-grid") === 0);
+  assert.ok(grid, ".pc-today-grid expected inside the today body");
+  const hero = findEl(grid, (n) => n.props && String(n.props.className || "").indexOf("pc-today-hero") === 0);
+  const side = findEl(grid, (n) => n.props && String(n.props.className || "").indexOf("pc-today-side") === 0);
+  assert.ok(hero && side, "hero + side columns expected");
+  // date block must live in the hero, buttons in the side
+  assert.ok(findEl(hero, (n) => n.props && String(n.props.className || "").indexOf("pc-today-date") === 0), "date in hero");
+  assert.ok(findEl(side, (n) => n.props && String(n.props.className || "").indexOf("pc-actions") === 0), "actions in side");
+});
+
+test("render: calendar rest cells correspond to isRestDayCell", () => {
+  // The view marks statutory + real-weekend cells as .rest (soft red tint)
+  // and leaves makeup workdays (stat.off === false) untinted. Assert the
+  // rule over a real 2026-09 grid: Sat + 中秋 off are rest, weekdays are not.
+  const cells = U.monthCells(2026, 9, { today: { y: 2026, m: 9, d: 3 }, statData: stat2026 });
+  const restKeys = cells.filter((c) => U.isRestDayCell(c)).map((c) => c.key);
+  assert.ok(restKeys.includes("2026-09-05"), "Saturday rest");
+  assert.ok(restKeys.includes("2026-09-25"), "中秋 off-day rest");
+  assert.ok(!restKeys.includes("2026-09-07"), "Monday not rest");
+  assert.ok(!restKeys.includes("2026-09-10"), "Thursday not rest");
+});
