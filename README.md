@@ -5,7 +5,7 @@
   <a href="https://github.com/runcat-tommy/dsh-panda-calendar/blob/main/README.en.md"><strong>English</strong></a>
 </p>
 
-DeepSeek Harness Web 的**免 token 日历与天气插件**：在会话页头新增「熊猫日历」标签页（与「对话」「轨迹」「诗词」同级，排在诗词之后），一站式提供 **公历 / 农历 / 干支 / 生肖 / 节气 / 节日 / 中国法定节假日（含调休）/ 多城市天气**。
+DeepSeek Harness Web 的**免 token 日历与天气插件**：在会话页头新增「熊猫日历」标签页（与「对话」「轨迹」「诗词」同级，排在诗词之后），一站式提供 **公历 / 农历 / 干支 / 生肖 / 节气 / 节日 / 中国法定节假日（含调休）/ 多城市天气 / 📜 历史上的今天**。
 
 <p align="center"><img src="https://raw.githubusercontent.com/runcat-tommy/dsh-panda-calendar/main/assets/preview-zh.jpg" alt="熊猫日历 界面预览" width="85%"></p>
 
@@ -18,6 +18,7 @@ DeepSeek Harness Web 的**免 token 日历与天气插件**：在会话页头新
 ## 功能
 
 - **今日信息卡**：本地公历日期 / 周几 → 农历（**北京时间口径**）· 干支年/月/日 · 生肖 → 节气 → 节日 chips（中文为主、英文附注）→ 🇨🇳 法定状态（放假 / 调休上班，含「假期第 N/M 天」）→ **✍ 发送到对话**（把该日摘要写入输入框，回车即可让 AI 接着聊）
+- **📜 历史上的今天**：今日卡内可折叠小节，按日期内联展示约 **3 条大事记 + 4~6 位精选名人诞辰**（历史名人为先）；内置 **366 天离线快照**（含 2/29，大陆裸网环境也完整可用），网络可达中文维基时自动增强当日最新内容（12h 缓存），来源标注 CC BY-SA
 - **月历网格**：6×7 月历，格内 公历日 + 农历 / 节气 / 节日小字；🔴「休」/ 灰「班」法定徽标；今日描边；点击任意一天在今日卡查看详情（含跨月翻跳）
 - **城市天气**：定位链（浏览器 → ip-api → 默认城市）+ 手动搜索添加城市（Open-Meteo Geocoding，`language=zh`，带国家消歧）、城市切换 / 删除、实时 + 3 天、刷新；**城市列表与当前城市持久化在 localStorage**，插件更新 / 重装后你添加的城市依然保留
 - **法定节假日**：红色「休」= 放假，灰色「班」= 调休上班；年份未公布 / 断网自动回退内置快照与节日规则，并注明数据来源
@@ -51,7 +52,7 @@ dsh plugin --profile web add link:.
 ## 使用
 
 1. 打开一个会话，点击页头 **「熊猫日历」** 标签。
-2. 今日卡默认显示今天：农历、干支、生肖、节气、节日、法定状态一目了然。
+2. 今日卡默认显示今天：农历、干支、生肖、节气、节日、法定状态一目了然；点「📜 历史上的今天」可展开当日大事记与名人诞辰。
 3. 点 **✍ 发送到对话**，该日摘要写入输入框（**不自动发送**），切回对话视图按回车即可让 AI 解读 / 安排。
 4. 月历支持翻月 / 「今天」/ 点选日期查看任意一天；天气卡可搜索添加任意城市、点击城市切换。
 
@@ -62,6 +63,7 @@ dsh plugin --profile web add link:.
 | 农历 / 干支 / 生肖 / 节气（1900–2100 内置数据表） | [6tail/lunar-javascript](https://github.com/6tail/lunar-javascript) | MIT |
 | 中国法定节假日（年度 JSON，国务院公告口径） | [imldres/holiday-cn](https://github.com/imldres/holiday-cn) | MIT |
 | 天气（当前 + 每日 3 天） | [Open-Meteo](https://open-meteo.com/) | CC-BY 4.0（数据）、免费 API |
+| 历史上的今天（大事记 / 诞辰，366 天内置快照 + 在线增强） | [中文维基百科](https://zh.wikipedia.org)（REST onthisday / 「M月D日」条目） | CC BY-SA |
 | 逆地理编码（经纬度 → 城市名） | [BigDataCloud reverse-geocode-client](https://www.bigdatacloud.com/docs/api/free-reverse-geocode-to-city-api) | 免费、无 Key |
 | IP 定位兜底 | [ip-api.com](https://ip-api.com/) | 免费、无 Key（非商用） |
 
@@ -83,7 +85,7 @@ node tools/gen-holiday-snapshot.mjs
 npm test          # node --test（eval 客户端包 + stub react/fetch，零网络、确定性）
 ```
 
-单测覆盖：历法引擎（911 组逐日 fixtures + 闰月 / 春节换年 / 节气口径 / 双向换算 / 越界）、节日规则（含复活节与农历年边界）、法定数据规整与徽标、天气解析与城市搜索、视图模型（月历网格 / 今日卡 / 发送文本）与注册冒烟。
+单测覆盖：历法引擎（911 组逐日 fixtures + 闰月 / 春节换年 / 节气口径 / 双向换算 / 越界）、节日规则（含复活节与农历年边界）、法定数据规整与徽标、天气解析与城市搜索、历史上的今天（快照查找 / 在线拉取缓存与静默失败）、视图模型（月历网格 / 今日卡 / 发送文本 / history 小节）与注册冒烟。
 
 目录结构：
 
@@ -95,7 +97,7 @@ dsh-panda-calendar/
 ├── lib/
 │   ├── index.js          # node 半部（无操作 host）
 │   └── client.js         # 浏览器半部：ModuleLoader bundle（单文件、免构建）
-├── tools/                # 引擎数据表 / 法定快照生成脚本（可复现）
+├── tools/                # 引擎数据表 / 法定 / 历史上的今天快照生成脚本（可复现）
 ├── test/                 # node --test 套件
 └── docs/                 # 可行性 / 问卷 / 方案设计（含实施备忘）
 ```
@@ -108,6 +110,7 @@ dsh-panda-calendar/
 - [x] M3：视图——今日卡 + 月历（休 / 班徽标、节气、节日）+ 城市天气；点选日期详情
 - [x] M4：定位链（浏览器 → ip-api → 默认城市）＋ 天气按城市列表自动刷新
 - [x] M5：发送到对话（setDraft + 切对话视图）、README 中英、CHANGELOG、npm 发布准备
+- [x] M6：今日卡「📜 历史上的今天」（366 天内置快照 + 中文维基在线增强，CC BY-SA）
 
 ## 变更记录
 

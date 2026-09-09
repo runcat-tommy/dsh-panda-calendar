@@ -4,19 +4,17 @@ All notable changes to **dsh-panda-calendar** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.0] - 2026-09-09
 
 ### Added
 
-- **发布与市场合规**：新增 `screenshots.json`（市场详情页截图声明，指向 `assets/preview-*.jpg`）与 `CHANGELOG.en.md`（英文变更日志，文档集达成中英对等）；新增 GitHub Actions `test` workflow（push / PR 自动跑 64 项单测，零依赖零安装步骤）。
+- **「历史上的今天」**：今日卡片内新增可折叠小节（📜 历史上的今天），每日期内联展示约 3 条大事记 + 4~6 位精选名人诞辰（大陆断网/无法访问维基时也完整可用）。
+  - 内置离线快照（366 天，含 2/29）由 `tools/gen-history-data.mjs` 依据中文维基百科编辑精选数据（CC BY-SA）生成，生成时经 opencc 统一为简体并做敏感度白名单精选（历史名人为先、过滤非人物噪声）；
+  - 在线增强：网络可达中文维基时按日期拉取该日最新大事记（REST onthisday/selected，12h localStorage 缓存、单日期单次），失败静默回退到快照，大陆裸网用户始终走快照；
+  - 诞辰始终来自白名单快照（维基实时诞辰流噪声大——混入「中国/南非」等国家词条，故不在运行时消费）。
+- **发布与市场合规**：新增 `screenshots.json`（市场详情页截图声明，指向 `assets/preview-*.jpg`）与 `CHANGELOG.en.md`（英文变更日志，文档集达成中英对等）；新增 GitHub Actions `test` workflow（push / PR 自动跑 74 项单测，零依赖零安装步骤）。
 - **天气短期缓存**：`PandaWeather.fetchWeather` 将最近 10 分钟的结果写入 localStorage（键按取整 lat/lon + 预报天数），再次打开标签页或切换城市不重复请求；视图首次加载可用缓存，「手动刷新」强制绕缓存取新数据。
 - **地理查询语言跟随 UI**：`searchCity` / `reverseGeocode` / `locateByIp` / `locateCurrentCity` 新增 `opts.lang`（默认 zh 行为不变），视图按当前界面语言传入——英文界面下 Open-Meteo / BigDataCloud / ip-api 返回英文城市与国家名，不再硬编码中文。
-
-### Tests
-
-- 新增 8 项 weather 测试（共 64）：`lang` 透传与 zh 默认不变、缓存命中不联网、过期重取、`force` 绕过、成功回写、无 storage 环境安全。
-
-## [Unreleased]
 
 ### Changed
 
@@ -27,7 +25,10 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Tests
 
+- 新增 7 项（共 74）：历史快照纯查找（`historyLookup`/`historyOf`，含 2/29、缺失日期空安全）、zh wiki onthisday 负载规范化、实时拉取缓存命中/过期重取/静默失败（429、断网、空响应、无 fetch 宿主）、今日卡 history 小节渲染集成（快照未生成时跳过）。
 - 新增 3 项（共 67）：`isRestDayCell` 语义（周末与法定 off 为休、调休上班不算休）、今日卡两栏结构、网格休息日判定一致。
+- 新增 8 项 weather 测试（共 64）：`lang` 透传与 zh 默认不变、缓存命中不联网、过期重取、`force` 绕过、成功回写、无 storage 环境安全。
+
 
 ## [1.1.0] - 2026-09-03
 

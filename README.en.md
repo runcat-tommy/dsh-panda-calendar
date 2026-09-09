@@ -5,7 +5,7 @@
   <a href="https://github.com/runcat-tommy/dsh-panda-calendar/blob/main/README.en.md"><strong>English</strong></a>
 </p>
 
-A **token-free calendar & weather plugin** for DeepSeek Harness Web. Adds a **"Panda Calendar (熊猫日历)"** tab to the session header (next to 对话/Chat, Trajectory and 诗词/Poetry, right after Poetry), giving you **solar/lunar dates, ganzhi, Chinese zodiac, solar terms, festivals, China public holidays (incl. make-up workdays) and multi-city weather** in one place.
+A **token-free calendar & weather plugin** for DeepSeek Harness Web. Adds a **"Panda Calendar (熊猫日历)"** tab to the session header (next to 对话/Chat, Trajectory and 诗词/Poetry, right after Poetry), giving you **solar/lunar dates, ganzhi, Chinese zodiac, solar terms, festivals, China public holidays (incl. make-up workdays), multi-city weather and 📜 on-this-day history** in one place.
 
 <p align="center"><img src="https://raw.githubusercontent.com/runcat-tommy/dsh-panda-calendar/main/assets/preview-en.jpg" alt="Panda Calendar preview" width="85%"></p>
 
@@ -18,6 +18,7 @@ A **token-free calendar & weather plugin** for DeepSeek Harness Web. Adds a **"P
 ## Features
 
 - **Today card**: local solar date/weekday → lunar (labelled **Beijing time**) · ganzhi year/month/day · zodiac → solar terms → festival chips (Chinese primary, English in tooltip) → 🇨🇳 statutory status (off / make-up workday, incl. "holiday day N/M") → **✍ Send to chat** (writes the day summary into the input box; press Enter to hand it to the AI)
+- **📜 On this day**: a collapsible section in the today card showing ~**3 events + 4–6 curated notable births** for the date (historical figures first); backed by a built-in **366-day offline snapshot** (incl. 2/29, fully usable on mainland networks with no Wikipedia access), auto-enhanced with the latest on-this-day content from the Chinese Wikipedia when reachable (12 h cache); source noted as CC BY-SA
 - **Month grid**: 6×7 calendar with solar day + lunar/term/festival subtitle per cell; red 休 / grey 班 statutory badges; today outlined; click any day to inspect it in the today card (cross-month clicks jump months)
 - **City weather**: locate chain (browser geolocation → ip-api.com → default cities) + manual city search (Open-Meteo Geocoding with `language=zh`, country disambiguation), switch/remove cities, current + 3-day, refresh — the **city list and active city persist to localStorage**, surviving plugin updates and reinstalls
 - **Public holidays**: red = off day, grey = make-up workday; unpublished/offline years fall back to snapshots and rule tables, with the data source noted
@@ -51,7 +52,7 @@ dsh plugin --profile web add link:.
 ## Usage
 
 1. Open a session and click the **Panda Calendar** tab.
-2. The today card shows today's lunar date, ganzhi, zodiac, terms, festivals and statutory status.
+2. The today card shows today's lunar date, ganzhi, zodiac, terms, festivals and statutory status; tap **📜 On this day** to expand the date's events and notable births.
 3. Click **✍ Send to chat** to drop that day's summary into the input box (it is **not sent automatically**); switch back to Chat and press Enter to have the AI elaborate.
 4. Flip months, use **Today**, or click any day for details; add/switch cities from the weather card.
 
@@ -62,6 +63,7 @@ dsh plugin --profile web add link:.
 | Lunar / ganzhi / zodiac / terms (built-in 1900–2100 tables) | [6tail/lunar-javascript](https://github.com/6tail/lunar-javascript) | MIT |
 | China public holidays (yearly JSON, State Council basis) | [imldres/holiday-cn](https://github.com/imldres/holiday-cn) | MIT |
 | Weather (current + 3-day daily) | [Open-Meteo](https://open-meteo.com/) | CC-BY 4.0 (data), free API |
+| On-this-day history (events / births, 366-day snapshot + live enhancement) | [Chinese Wikipedia](https://zh.wikipedia.org) (REST onthisday / "M月D日" pages) | CC BY-SA |
 | Reverse geocoding (lat/lon → city) | [BigDataCloud reverse-geocode-client](https://www.bigdatacloud.com/docs/api/free-reverse-geocode-to-city-api) | Free, no key |
 | IP geolocation fallback | [ip-api.com](https://ip-api.com/) | Free, no key (non-commercial) |
 
@@ -83,7 +85,7 @@ It fetches the latest schedule, writes it into the bundle and regenerates the te
 npm test          # node --test (evals the client bundle with stubbed react/fetch — zero network, deterministic)
 ```
 
-The suite covers: calendar engine (911 day-by-day fixtures + leap months / Spring-Festival year boundary / term rules / round-trip / out-of-range), festival rules (incl. Easter and lunar-year boundary), statutory normalization & badges, weather parsing & city search, view models (month grid / today card / send text) and a registration smoke test.
+The suite covers: calendar engine (911 day-by-day fixtures + leap months / Spring-Festival year boundary / term rules / round-trip / out-of-range), festival rules (incl. Easter and lunar-year boundary), statutory normalization & badges, weather parsing & city search, on-this-day history (snapshot lookup / live-fetch caching & silent failure), view models (month grid / today card / send text / history section) and a registration smoke test.
 
 Layout:
 
@@ -95,7 +97,7 @@ dsh-panda-calendar/
 ├── lib/
 │   ├── index.js          # node half (no-op host)
 │   └── client.js         # browser half: ModuleLoader bundle (single file, no build)
-├── tools/                # reproducible table/snapshot generators
+├── tools/                # reproducible engine-table / statutory / history snapshot generators
 ├── test/                 # node --test suite
 └── docs/                 # feasibility / Q&A / design (implementation memo)
 ```
@@ -108,6 +110,7 @@ dsh-panda-calendar/
 - [x] M3: view — today card + month grid (休/班 badges, terms, festivals) + city weather; click-to-inspect days
 - [x] M4: locate chain (browser → ip-api → defaults) + weather auto-refresh per city list
 - [x] M5: send-to-chat (setDraft + switch to Chat view), bilingual README, CHANGELOG, npm publish prep
+- [x] M6: "📜 On this day" in the today card (366-day snapshot + Chinese-Wikipedia live enhancement, CC BY-SA)
 
 ## Changelog
 
