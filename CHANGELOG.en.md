@@ -4,6 +4,21 @@ All notable changes to **dsh-panda-calendar** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-09-09
+
+### Fixed
+
+- **Live-fetch fallback semantics corrected**: `PandaHistory.fetchHistoryLive` now treats an explicit `fetchImpl: null` as "host has no network capability" — it resolves null and never calls the global fetch; only an absent `fetchImpl` (undefined) falls back to the global fetch (the browser runtime path is unchanged). Previously `null` silently degraded into the global fetch and issued a real request, which made the silent-fallback test depend on network reachability: on CI (Chinese Wikipedia reachable) the real request returned that day's events and the `null` assertion failed, while the sandboxed local environment passed only because the request was rejected instantly.
+- **Environment-independent tests**: with the fix the 74 unit tests produce identical results with or without internet access, and the local suite dropped from ~10.7 s to ~0.2 s (no more hidden Wikipedia-request wait).
+
+### Docs
+
+- Preview screenshots replaced with manual captures (`assets/preview-zh.jpg` / `assets/preview-en.jpg`, zh & en), showing the v1.2.0 compact two-column today card with the expanded "📜 On this day" section.
+
+### Release
+
+- Patch release completed: code pushed to GitHub + `v1.2.1` published on npm (CI fix + screenshot refresh).
+
 ## [1.2.0] - 2026-09-09
 
 ### Added

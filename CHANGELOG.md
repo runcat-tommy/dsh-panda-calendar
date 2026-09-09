@@ -4,6 +4,21 @@ All notable changes to **dsh-panda-calendar** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-09-09
+
+### Fixed
+
+- **实时拉取回退语义修正**：`PandaHistory.fetchHistoryLive` 现在把显式传入的 `fetchImpl: null` 视为「宿主无网络能力」——直接返回 null、绝不调用全局 fetch；只有未传 `fetchImpl`（undefined）时才回退全局 fetch（浏览器运行路径不变）。此前 null 会静默回落成全局 fetch 发起真实请求，使「静默失败」测试依赖网络可达性：CI 上（可访问中文维基）真实返回当天事件导致断言失败，而本地沙箱因请求被秒拒而“侥幸”通过。
+- **测试环境无关化**：修复后 74 项单测在有网/无网环境结果一致，本机套件耗时由 ~10.7s 降至 ~0.2s（不再有隐藏的维基请求等待）。
+
+### Docs
+
+- 预览截图换用人工截图（`assets/preview-zh.jpg` / `assets/preview-en.jpg`，中英双版），展示 v1.2.0 紧凑双栏今日卡与展开的「📜 历史上的今天」小节。
+
+### 发布
+
+- 完成补丁发布：代码推送 GitHub + 发布 npm `v1.2.1`（CI 修复 + 截图更新）。
+
 ## [1.2.0] - 2026-09-09
 
 ### Added
