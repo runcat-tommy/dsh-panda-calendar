@@ -225,6 +225,22 @@ test("view: today card renders a collapsible history section when data exists", 
   const head = findEl(hist, (n) => n.props && String(n.props.className || "").indexOf("pc-history-head") === 0);
   assert.ok(head, "clickable header expected");
   assert.ok(textOf(head).includes("L:historyToday"), "header carries the 历史上的今天 label");
+  // explicit expand/collapse affordance: a pill button, collapsed by default
+  const toggle = findEl(hist, (n) => n.props && String(n.props.className || "").indexOf("pc-history-toggle") === 0);
+  assert.ok(toggle, "an explicit expand/collapse button is rendered");
+  assert.equal(toggle.props["aria-expanded"], "false", "the section starts collapsed");
+  assert.ok(textOf(toggle).includes("L:historyExpand"), "the collapsed button advertises the full item count");
+  // first entry is previewed while collapsed so the section is discoverable
+  const preview = findEl(hist, (n) => n.props && String(n.props.className || "").indexOf("pc-history-preview") === 0);
+  assert.ok(preview, "collapsed state shows a first-entry preview");
+  assert.ok(textOf(preview).includes("L:historyPreviewHint"), "preview carries a click-to-expand hint");
+  if (sample.events.length) {
+    assert.ok(textOf(preview).includes(sample.events[0][0]), "preview shows the first event's year");
+    assert.ok(textOf(preview).includes(sample.events[0][1]), "preview shows the first event's text");
+    assert.ok(!String(preview.props.className).includes("birth"), "event preview is not marked as a birth");
+  } else {
+    assert.ok(String(preview.props.className).includes("birth"), "birth-only dates preview a birth instead");
+  }
   // content is always in the tree; .closed hides it visually via CSS
   const evRow = findEl(hist, (n) => n.props && String(n.props.className || "").indexOf("pc-hevent") === 0);
   assert.ok(evRow || sample.events.length === 0, "an events row is rendered when events exist");

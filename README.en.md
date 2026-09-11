@@ -18,7 +18,7 @@ A **token-free calendar & weather plugin** for DeepSeek Harness Web. Adds a **"P
 ## Features
 
 - **Today card**: local solar date/weekday → lunar (labelled **Beijing time**) · ganzhi year/month/day · zodiac → solar terms → festival chips (Chinese primary, English in tooltip) → 🇨🇳 statutory status (off / make-up workday, incl. "holiday day N/M") → **✍ Send to chat** (writes the day summary into the input box; press Enter to hand it to the AI)
-- **📜 On this day**: a collapsible section in the today card showing ~**3 events + 4–6 curated notable births** for the date (historical figures first); backed by a built-in **366-day offline snapshot** (incl. 2/29, fully usable on mainland networks with no Wikipedia access), auto-enhanced with the latest on-this-day content from the Chinese Wikipedia when reachable (12 h cache); source noted as CC BY-SA
+- **📜 On this day**: a collapsible section in the today card showing ~**3 events + 4–6 curated notable births** for the date (historical figures first); the **collapsed state already shows the first entry** (click it to expand) and the right-hand pill button reads "Show all N ▾ / Collapse ▴"; backed by a built-in **366-day offline snapshot** (incl. 2/29, fully usable on mainland networks with no Wikipedia access), auto-enhanced with the latest on-this-day content from the Chinese Wikipedia when reachable (12 h cache); source noted as CC BY-SA
 - **Month grid**: 6×7 calendar with solar day + lunar/term/festival subtitle per cell; red 休 / grey 班 statutory badges; today outlined; click any day to inspect it in the today card (cross-month clicks jump months)
 - **City weather**: locate chain (browser geolocation → ip-api.com → default cities) + manual city search (Open-Meteo Geocoding with `language=zh`, country disambiguation), switch/remove cities, current + 3-day, refresh — the **city list and active city persist to localStorage**, surviving plugin updates and reinstalls
 - **Public holidays**: red = off day, grey = make-up workday; unpublished/offline years fall back to snapshots and rule tables, with the data source noted
@@ -52,7 +52,7 @@ dsh plugin --profile web add link:.
 ## Usage
 
 1. Open a session and click the **Panda Calendar** tab.
-2. The today card shows today's lunar date, ganzhi, zodiac, terms, festivals and statutory status; tap **📜 On this day** to expand the date's events and notable births.
+2. The today card shows today's lunar date, ganzhi, zodiac, terms, festivals and statutory status; "📜 On this day" already previews its first entry while collapsed — click that preview or the "Show all N ▾" pill to reveal every event and notable birth ("Collapse ▴" folds it back).
 3. Click **✍ Send to chat** to drop that day's summary into the input box (it is **not sent automatically**); switch back to Chat and press Enter to have the AI elaborate.
 4. Flip months, use **Today**, or click any day for details; add/switch cities from the weather card.
 

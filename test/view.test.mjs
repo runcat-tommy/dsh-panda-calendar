@@ -451,8 +451,21 @@ test("render: today body uses a two-column grid (hero + side)", () => {
   const side = findEl(grid, (n) => n.props && String(n.props.className || "").indexOf("pc-today-side") === 0);
   assert.ok(hero && side, "hero + side columns expected");
   // date block must live in the hero, buttons in the side
-  assert.ok(findEl(hero, (n) => n.props && String(n.props.className || "").indexOf("pc-today-date") === 0), "date in hero");
+  const dateRow = findEl(hero, (n) => n.props && String(n.props.className || "").indexOf("pc-today-date") === 0);
+  assert.ok(dateRow, "date in hero");
   assert.ok(findEl(side, (n) => n.props && String(n.props.className || "").indexOf("pc-actions") === 0), "actions in side");
+  // hero hierarchy: date + weekday pill / lunar row / ganzhi row
+  assert.ok(findEl(hero, (n) => n.props && String(n.props.className || "").indexOf("pc-weekday") === 0), "weekday pill in the date row");
+  const lunarRow = findEl(hero, (n) => n.props && String(n.props.className || "").indexOf("pc-today-lunar") === 0);
+  assert.ok(lunarRow, "lunar row in hero");
+  assert.ok(findEl(lunarRow, (n) => n.props && String(n.props.className || "").indexOf("pc-today-label") === 0), "lunar row carries its own label");
+  const ganzhiRow = findEl(hero, (n) => n.props && String(n.props.className || "").indexOf("pc-today-ganzhi") === 0);
+  assert.ok(ganzhiRow, "ganzhi row in hero");
+  assert.ok(textOf(ganzhiRow).includes(" · "), "ganzhi parts are separated for readability");
+  // the zodiac must appear exactly once (as a chip in the side tags), never duplicated in the hero
+  assert.ok(!textOf(hero).includes("生肖"), "hero must not repeat the zodiac");
+  const tags = findEl(side, (n) => n.props && String(n.props.className || "").indexOf("pc-today-tags") === 0);
+  assert.ok(tags && textOf(tags).includes("生肖"), "zodiac chip lives in the side tags");
 });
 
 test("render: calendar rest cells correspond to isRestDayCell", () => {
