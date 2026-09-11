@@ -226,7 +226,7 @@ test("view: today card renders a collapsible history section when data exists", 
   const head = findEl(hist, (n) => n.props && String(n.props.className || "").indexOf("pc-history-head") === 0);
   assert.ok(head, "clickable header expected");
   assert.ok(textOf(head).includes("L:historyToday"), "header carries the 历史上的今天 label");
-  // explicit expand/collapse affordance: a pill button, collapsed by default
+  // explicit expand/collapse affordance: a solid button, collapsed by default
   const toggle = findEl(hist, (n) => n.props && String(n.props.className || "").indexOf("pc-history-toggle") === 0);
   assert.ok(toggle, "an explicit expand/collapse button is rendered");
   assert.equal(toggle.props["aria-expanded"], "false", "the section starts collapsed");
@@ -247,6 +247,64 @@ test("view: today card renders a collapsible history section when data exists", 
   assert.ok(evRow || sample.events.length === 0, "an events row is rendered when events exist");
   const birRow = findEl(hist, (n) => n.props && String(n.props.className || "").indexOf("pc-hbirth") === 0);
   assert.ok(birRow || sample.births.length === 0, "a births row is rendered when births exist");
+});
+
+/** The expand/collapse control is the section's primary action, so it has to
+ *  read as one. It used to be a brand-tinted 999px pill, which in the
+ *  monochrome host theme (brand-primary and button-primary-fill both resolve to
+ *  near-black) looked like small print sitting next to the title rather than a
+ *  control. It now shares the card's primary-action treatment (.pc-ts-now):
+ *  solid fill, 8px radius, 13px/600 label, shadow. */
+test("view: the on-this-day toggle reads as a prominent action", (t) => {
+  const sample = H.historyOf(6, 15);
+  if (sample === null) {
+    t.skip("bundle snapshot not generated yet — the toggle only renders with data");
+    return;
+  }
+  const registrations = [];
+  const ctx = {
+    get: () => undefined,
+    on: () => () => {},
+    effect: () => () => {},
+    locale: { register: () => {}, bind: () => (key) => `L:${key}` },
+    slots: {
+      inject: (name, cb) => { registrations.push(cb()); },
+      register: (def, render) => ({ def, render }),
+    },
+  };
+  exp.apply(ctx);
+  const viewReg = registrations.find((r) => r.def && r.def.name === "conversation.view");
+  exp.__react._resetHooks();
+  const elem = viewReg.render({
+    sessionId: "history-toggle",
+    inputActions: null,
+    nowMs: Date.UTC(2026, 5, 15, 12),
+  });
+  const tree = elem.type(elem.props || {});
+  const toggle = findEl(tree, (n) => n.props && String(n.props.className || "").indexOf("pc-history-toggle") === 0);
+  assert.ok(toggle, "a .pc-history-toggle button is rendered");
+  assert.equal(toggle.type, "button", "it is a real <button> element");
+  assert.equal(toggle.props["aria-expanded"], "false", "collapsed by default");
+  assert.ok(textOf(toggle).includes("L:historyExpand"), "still advertises the full item count");
+
+  const css = readFileSync(new URL("../lib/client.js", import.meta.url), "utf8");
+  const start = css.indexOf(".pc-history-toggle {");
+  assert.ok(start > 0, ".pc-history-toggle rule exists");
+  const rule = css.slice(start, css.indexOf(".pc-history-toggle .pc-history-caret", start));
+  assert.ok(/background: var\(--dsw-alias-button-primary-fill/.test(rule), "solid brand background, not a tinted pill");
+  assert.ok(/box-shadow/.test(rule), "raised (shadowed) look");
+  assert.ok(/font-weight: 600/.test(rule), "heavier label than the small print beside it");
+  assert.ok(!/background: transparent/.test(rule), "no flat-chip styling leaks in");
+  assert.ok(!/border-radius: 999px/.test(rule), "no longer the 999px pill that read as small print");
+  assert.ok(/border-radius: 8px/.test(rule), "rectangular shape shared with the card's primary action");
+  // deliberately not smaller than the 13px section title, and a far bigger hit
+  // area than the old 11px / 3px 11px pill it replaced
+  const size = Number(rule.match(/font-size: ([\d.]+)px/)[1]);
+  assert.ok(size >= 13, "label is at least the section title's size (" + size + "px)");
+  const pad = rule.match(/padding: (\d+)px (\d+)px/);
+  assert.ok(pad, "padding declared");
+  assert.ok(Number(pad[1]) >= 8 && Number(pad[2]) >= 14, "hit area well above the old 3px/11px pill");
+  assert.ok(/cursor: pointer/.test(rule), "still reads as clickable");
 });
 
 /** Data hygiene: the bundled snapshot must be free of the wikitext/HTML

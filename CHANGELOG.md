@@ -4,6 +4,21 @@ All notable changes to **dsh-panda-calendar** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.4] - 2026-09-11
+
+### Changed
+
+- **「历史上的今天」的展开 / 收起改为醒目的主色实心按钮**：此前它是 11px 的品牌色描边胶囊（`border-radius: 999px`、`padding: 3px 11px`），而宿主是**单色主题**——`--dsw-alias-brand-primary` 与正文色同为近黑——于是它在标题右侧几乎等于一段小字，收到的反馈就是「展开 / 收起按钮不够明显」。现改为与时间戳卡「现在」按钮同款的主操作形制：实心填充（`--dsw-alias-button-primary-fill`）+ 8px 圆角 + `0 2px 8px` 投影 + 13px/600 字重 + `8px 14px` 内边距，hover 加亮上浮、按下下沉、键盘聚焦描边；折叠态的「展开全部 N 条 ▾」与展开态的「收起 ▴」同样生效。
+  - 折叠态「默认只露首条」（首条预览 + 「首条预览 · 点击展开」提示）**保持不变**——它本来就已经实现，本次只解决"按钮不够明显"这一半。
+
+### Tests
+
+- 单测 87 → **88 项**：新增「历史上的今天 的展开 / 收起读作主操作」用例，断言它是真 `<button>`、默认 `aria-expanded="false"`，且 CSS 为实心填充、有投影、字重 600、8px 圆角（**刻意不再是 999px 胶囊**）、字号 ≥ 13px、内边距 ≥ 8px/14px（防止日后被改回扁平小字）。
+
+### 发布
+
+- 发布 v1.2.4：代码推送 GitHub + 发布 npm `v1.2.4`（界面细节改进，补丁版本；npm 页面沿用中文 README，无需替换）。
+
 ## [1.2.3] - 2026-09-11
 
 ### Changed

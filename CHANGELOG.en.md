@@ -4,6 +4,21 @@ All notable changes to **dsh-panda-calendar** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.4] - 2026-09-11
+
+### Changed
+
+- **The on-this-day expand/collapse control is now a prominent solid primary button**: it used to be an 11px brand-tinted outlined pill (`border-radius: 999px`, `padding: 3px 11px`), and in the **monochrome host theme** — where `--dsw-alias-brand-primary` and the body text colour both resolve to near-black — it read as small print sitting next to the title, which is how it was reported ("the expand/collapse button is not obvious enough"). It now shares the timestamp card's primary-action treatment: solid fill (`--dsw-alias-button-primary-fill`), 8px corners, a `0 2px 8px` shadow, a 13px/600 label and `8px 14px` padding — brightening and lifting on hover, sinking on press, outlining on keyboard focus. Both states are affected: "Show all N ▾" collapsed and "Collapse ▴" open.
+  - Collapsed-state behaviour is **unchanged**: it already showed the first entry as a preview with the "first entry · click to expand" hint, so this release addresses only the "control is not obvious enough" half of the report.
+
+### Tests
+
+- The suite grew from 87 to **88 tests**: a new "the on-this-day toggle reads as a prominent action" case asserts it is a real `<button>` starting at `aria-expanded="false"`, and that its CSS uses a solid fill, a shadow, 600 weight and 8px corners (**no longer a 999px pill**), with a label of at least 13px and padding of at least 8px/14px — so it cannot silently regress to flat small print.
+
+### Release
+
+- v1.2.4 released: code pushed to GitHub + `v1.2.4` published on npm (a UI-detail patch release; the npm page keeps the Chinese README, so no README swap was needed).
+
 ## [1.2.3] - 2026-09-11
 
 ### Changed
