@@ -107,6 +107,22 @@ function stripLinks(t) {
     .replace(/\[\[/g, "").replace(/\]\]/g, "");
 }
 
+/** Drop MediaWiki/HTML remnants that survive the wikitext pass: <ref/> and
+ *  <ref>…</ref> citation markers, <br>, <small>/<sup> wrappers, HTML comments
+ *  and the entities that come with them. Without this, strings such as
+ *  "…正式向外界公布。<ref></ref>" reach the UI verbatim. */
+function stripTags(t) {
+  return t
+    .replace(/<ref[^>]*?\/\s*>/gi, "")
+    .replace(/<ref[^>]*>[\s\S]*?<\/ref>/gi, "")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<\/?[a-zA-Z][^>]*>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&lt;/gi, "<").replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"').replace(/&#0?39;/g, "'")
+    .replace(/&amp;/gi, "&");
+}
+
 function cleanText(t) {
   let s = t
     // templates first: {{...}} (also handles {{lang|...|zh=X}} etc.)
@@ -114,11 +130,14 @@ function cleanText(t) {
     // zh wiki language-conversion blocks: -{zh-cn:A; zh-tw:B}- / {A|B} —
     // pick the target-variant text
     .replace(/-?\{([^{}]*)\}-?/g, (m, inner) => pickVariant(inner))
-    .replace(/'''|''/g, "")
+    .replace(/'''|''/g, "");
+  s = stripTags(s)
     .replace(/\s+/g, " ")
     .trim();
   // a conversion we could not resolve leaves stray braces; drop them
   s = s.replace(/[{}]/g, "");
+  // nothing should look like markup any more — drop a lone stray tag remnant
+  s = s.replace(/<\/?[^>\s]{0,12}>/g, "");
   return s;
 }
 

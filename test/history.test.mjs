@@ -12,6 +12,7 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { loadClient, findEl, textOf } from "./helpers.mjs";
 
 const exp = loadClient();
@@ -246,4 +247,40 @@ test("view: today card renders a collapsible history section when data exists", 
   assert.ok(evRow || sample.events.length === 0, "an events row is rendered when events exist");
   const birRow = findEl(hist, (n) => n.props && String(n.props.className || "").indexOf("pc-hbirth") === 0);
   assert.ok(birRow || sample.births.length === 0, "a births row is rendered when births exist");
+});
+
+/** Data hygiene: the bundled snapshot must be free of the wikitext/HTML
+ *  leftovers the build-time cleaner is supposed to remove (a "<ref></ref>"
+ *  once reached the UI), and the fixture must match the bundle so a snapshot
+ *  edit without regeneration is caught. */
+test("snapshot data: no markup leftovers, fixture matches the bundle", () => {
+  const fixture = JSON.parse(readFileSync(new URL("./fixtures/history.snapshot.json", import.meta.url), "utf8"));
+  const bundle = JSON.parse(readFileSync(new URL("../tools/history-snapshot.txt", import.meta.url), "utf8")
+    .replace(/^var PANDA_HISTORY_SNAPSHOT = /, "").replace(/;\s*$/, ""));
+  const keys = Object.keys(fixture);
+  assert.ok(keys.length >= 366, "a full year of days, got " + keys.length);
+  assert.deepEqual(keys.sort(), Object.keys(bundle).sort(), "fixture and bundle hold the same dates");
+  let entries = 0;
+  for (const k of keys) {
+    const rec = fixture[k];
+    // a day may legitimately omit `e` or `b` when that list is empty
+    assert.ok(rec.e === undefined || Array.isArray(rec.e), k + " events array");
+    assert.ok(rec.b === undefined || Array.isArray(rec.b), k + " births array");
+    assert.equal(JSON.stringify(rec), JSON.stringify(bundle[k]), "bundle matches fixture for " + k);
+    for (const [y, text] of rec.e || []) {
+      entries++;
+      assert.match(y, /^-?\d+$/, k + " event year looks numeric");
+      assert.ok(text && text.length > 4, k + " event text is non-trivial");
+      assert.ok(!/[<>]/.test(text), k + " event text has no markup: " + text.slice(0, 60));
+      assert.ok(!/\{\{|\}\}|\[\[|\]\]/.test(text), k + " event text has no wikitext: " + text.slice(0, 60));
+    }
+    for (const [y, name, desc] of rec.b || []) {
+      entries++;
+      assert.match(y, /^-?\d+$/, k + " birth year looks numeric");
+      assert.ok(name, k + " birth has a name");
+      assert.ok(!/[<>]/.test(name) && !/[<>]/.test(desc || ""), k + " birth text has no markup");
+      assert.ok(!/\{\{|\}\}|\[\[|\]\]/.test(name) && !/\{\{|\}\}|\[\[|\]\]/.test(desc || ""), k + " birth text has no wikitext");
+    }
+  }
+  assert.ok(entries > 3000, "snapshot carries a full dataset, got " + entries);
 });

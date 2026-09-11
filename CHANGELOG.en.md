@@ -4,6 +4,33 @@ All notable changes to **dsh-panda-calendar** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-09-11
+
+### Added
+
+- **⏱ Timestamp converter card**: a standalone card below the "City weather" card, computed purely on the client so it **works offline** with no network and no API key.
+  - **Timestamp → Date**: paste a number and get the full date & time instantly; 10-digit (seconds) vs 13-digit (milliseconds) values are **auto-detected** and labelled ("detected milliseconds"), or you can pin the unit to Auto / Seconds / Milliseconds; invalid input is reported immediately and the field is flagged in red.
+  - **Date → Timestamp**: fill in Y/M/D h:m:s to get both **epoch seconds and milliseconds**, read back in the selected zone for verification (e.g. 2026-09-11 14:33:20 in Beijing/Shanghai → 1789108400 / 1789108400000).
+  - **Time-zone selector**: Local / UTC / Beijing–Shanghai / Hong Kong / Taipei / Tokyo / Singapore / New Delhi / Dubai / Moscow / London / Paris–Berlin / New York / Chicago / Los Angeles / Sydney. Offsets come from `Intl.DateTimeFormat`, so **DST applies automatically** (same instant: Shanghai 14:33:20, UTC 06:33:20, New York 02:33:20); wall-clock → epoch uses a two-pass offset correction that survives DST jumps.
+  - Results carry the **weekday, UTC offset and ISO 8601 (UTC)** with one-click copy per line (including an `execCommand` fallback); a "Now" button fills the current instant; input and selections persist across tab switches.
+
+### Fixed
+
+- **Wikitext leftovers in the on-this-day text**: markers such as `<ref></ref>` used to reach the UI verbatim (e.g. "…死亡`<ref></ref>`。"). The build script now strips tags and entities uniformly (`<ref>`, `<br>`, `<small>`, HTML comments, `&nbsp;`, …) and the snapshot was regenerated offline: entries containing markup dropped from **16 to 0** across 3257 texts over 366 days.
+- **Missing English dictionary key**: `refresh` existed only in the Chinese dictionary (zh 103 keys / en 102 keys); it is now present in both, with new tests guarding full zh/en key parity and non-empty timestamp keys.
+
+### Tests
+
+- The suite grew from 74 to **86 tests**: the timestamp converter (seconds/milliseconds detection and the `1e11` split, Date-range rejection, multi-zone formatting and inverse conversion, 2026 US/EU DST transitions, invalid and empty input, card placement below the weather card, dictionary parity and bilingual zone names) plus on-this-day data hygiene (no markup, no drift between the fixture and the inlined snapshot).
+
+### Docs
+
+- `README.md` / `README.en.md`: new "⏱ Timestamp converter" feature bullet and usage step, plus an updated test-coverage summary.
+
+### Release
+
+- v1.2.2 released: code pushed to GitHub + `v1.2.2` published on npm.
+
 ## [1.2.1] - 2026-09-09
 
 ### Fixed
