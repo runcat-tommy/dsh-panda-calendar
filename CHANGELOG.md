@@ -4,6 +4,21 @@ All notable changes to **dsh-panda-calendar** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.3] - 2026-09-11
+
+### Changed
+
+- **「现在」按钮改为卡片的主操作按钮**：时间戳转换卡里的「现在」此前是透明描边的扁平小胶囊（与「自动 / 秒 / 毫秒」单位胶囊同款），不够显眼。现改为**实心主色按钮**：🕒 时钟图标 + 13px/600 字重 + 8px 圆角 + 实心填充 + `0 2px 8px` 投影（hover 加亮上浮、按下下沉、键盘聚焦有描边），高度 24→35px，明显大于同排 24px 的单位胶囊；「时间戳 → 日期」与「日期 → 时间戳」两种模式都生效（模式 A 在输入框右侧、模式 B 在日期小格下方）。
+  - 为什么不用配色区分：宿主主题为**单色主题**——实测 `--dsw-alias-brand-primary` 与 `--dsw-alias-button-primary-fill` 同为 `rgb(15, 17, 21)`，没有可用的饱和强调色，因此层级只能靠形制（尺寸 / 字重 / 图标 / 投影）表达；按钮文字对比度实测 18.9:1。
+
+### Tests
+
+- 单测 86 → **87 项**：新增「现在按钮读作主操作」用例，断言它是真 `<button>`、带时钟图标、实心填充、有投影、字重 600，且字号与内边距**刻意大于** `.pc-city` 胶囊、圆角为 8px 而非 999px（防止日后被改回扁平样式）。
+
+### 发布
+
+- 发布 v1.2.3：代码推送 GitHub + 发布 npm `v1.2.3`（界面细节改进，补丁版本）。
+
 ## [1.2.2] - 2026-09-11
 
 ### Added

@@ -8,6 +8,7 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { loadClient, findEl, textOf } from "./helpers.mjs";
 
 const exp = loadClient();
@@ -178,6 +179,35 @@ test("view: timestamp card renders below the weather card", () => {
   walk(cards[1]);
   assert.equal(outRows.length, 0, "no result block while the input is empty");
   assert.ok(textOf(cards[1]).includes("L:tsEmpty"), "an empty-state hint is shown instead");
+});
+
+/** The "Now" shortcut is the card's primary action: it must render as a solid
+ *  brand button with a clock icon, not as a flat chip like the unit pills. */
+test("view: the Now button reads as a prominent action", () => {
+  const tree = renderView("timestamp-view-now", zhT);
+  const btn = findEl(tree, (n) => n.props && String(n.props.className || "") === "pc-ts-now");
+  assert.ok(btn, "a .pc-ts-now button is rendered");
+  assert.equal(btn.type, "button", "it is a real <button> element");
+  assert.equal(btn.props.title, "L:tsNow", "hover title repeats the label");
+  assert.ok(textOf(btn).includes("L:tsNow"), "carries the Now label");
+  assert.ok(findEl(btn, (n) => n.props && String(n.props.className || "") === "ico"), "clock icon span");
+  const css = readFileSync(new URL("../lib/client.js", import.meta.url), "utf8");
+  const start = css.indexOf(".pc-ts-now {");
+  assert.ok(start > 0, ".pc-ts-now rule exists");
+  const rule = css.slice(start, css.indexOf(".pc-ts-now .ico", start));
+  assert.ok(/background: var\(--dsw-alias-button-primary-fill/.test(rule), "solid brand background, not transparent");
+  assert.ok(/box-shadow/.test(rule), "raised (shadowed) look");
+  assert.ok(/font-weight: 600/.test(rule), "heavier label than the pill group");
+  assert.ok(!/background: transparent/.test(rule), "no flat-chip styling leaks in");
+  // deliberately larger than the .pc-city pills next to it (12px / 3px 12px)
+  const nowSize = Number(rule.match(/font-size: ([\d.]+)px/)[1]);
+  const pillRule = css.slice(css.indexOf(".pc-city {"), css.indexOf(".pc-city.active"));
+  const pillSize = Number(pillRule.match(/font-size: ([\d.]+)px/)[1]);
+  assert.ok(nowSize > pillSize, "Now label is larger than the pills (" + nowSize + " vs " + pillSize + "px)");
+  const nowPad = rule.match(/padding: (\d+)px (\d+)px/);
+  const pillPad = pillRule.match(/padding: (\d+)px (\d+)px/);
+  assert.ok(Number(nowPad[2]) > Number(pillPad[2]), "Now has more horizontal padding than the pills");
+  assert.ok(/border-radius: 8px/.test(rule), "rectangular button shape instead of a 999px pill");
 });
 
 /** Localization: the plugin registers zh+en dictionaries with the host, so the

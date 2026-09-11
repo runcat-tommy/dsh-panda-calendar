@@ -4,6 +4,21 @@ All notable changes to **dsh-panda-calendar** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.3] - 2026-09-11
+
+### Changed
+
+- **The "Now" shortcut is now the card's primary action**: it used to be a flat, transparent outlined chip (the same look as the Auto / Seconds / Milliseconds unit pills), which was easy to miss. It is now a **solid primary button**: 🕒 clock icon, 13px/600 label, 8px corners, solid fill and a `0 2px 8px` shadow (brightens and lifts on hover, sinks on press, outlines on keyboard focus), grown from 24px to 35px tall — clearly bigger than the 24px unit pills beside it. Applies to both directions (to the right of the input in Timestamp → Date, below the date fields in Date → Timestamp).
+  - Why not a colour accent: the host theme is **monochrome** — measured live, `--dsw-alias-brand-primary` and `--dsw-alias-button-primary-fill` both resolve to `rgb(15, 17, 21)`, so no saturated accent exists and hierarchy has to come from form (size, weight, icon, elevation). The label contrast measures 18.9:1.
+
+### Tests
+
+- The suite grew from 86 to **87 tests**: a new "the Now button reads as a prominent action" case asserts it is a real `<button>` with a clock icon, solid fill, shadow and 600 weight, and that its font size and padding are deliberately **larger** than the `.pc-city` pills with 8px corners rather than 999px (so it cannot silently regress to the flat style).
+
+### Release
+
+- v1.2.3 released: code pushed to GitHub + `v1.2.3` published on npm (a UI-detail patch release).
+
 ## [1.2.2] - 2026-09-11
 
 ### Added

@@ -1,7 +1,7 @@
 {
   "name": "dsh-panda-calendar",
   "description": "Global Chinese calendar & weather for DeepSeek Harness Web: a '熊猫日历' conversation-view tab (next to 对话/轨迹) with solar/lunar dates, ganzhi/zodiac, solar terms, traditional & international festivals, China public holidays (incl. 调休 workdays), multi-city weather, an epoch↔date converter with time-zone selection, and on-this-day history (大事记 + 名人诞辰) — free data sources, no API key. 熊猫日历：会话页头新增「熊猫日历」标签页，公历/农历/干支/生肖/节气、中国传统与国际通用节日、中国法定节假日（含调休）、多城市天气、时间戳转换（秒/毫秒 ↔ 年月日时分秒，可选时区、自动处理夏令时）、历史上的今天（大事记 + 名人诞辰）；全部数据源免费、无需 API Key。",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "type": "module",
   "main": "lib/index.js",
   "repository": {
