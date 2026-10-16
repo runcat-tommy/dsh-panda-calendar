@@ -4,6 +4,24 @@ All notable changes to **dsh-panda-calendar** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.5] - 2026-10-16
+
+### Fixed
+
+- **本包此前完全没有声明宿主版本要求，社区市场只能把它判为 `unknown`**：`package.json` 里没有任何 `peerDependencies`，而市场的判定只认三类声明——`engines.dsh`，以及 `peerDependencies` 里既在**宿主包清单**内、又匹配 `@deepseek-ai/dsh*` 的项（`dshmarket/lib/discovery-compatibility.js` 的 `deriveHostCompatibility`）。一条都没有，插件就无法声明「我支持 0.2.x」。
+  - 现补 4 条，正是 `dsh.client.inject` 已声明的四个包：`@deepseek-ai/dsh-client-runtime` / `dsh-client-locale` / `dsh-client-ui-slots` / `dsh-client-ui-conversation`，范围统一为 **`^0.1.0-rc.6 || ^0.2.0-rc.1`**。
+  - 为什么是两段式而不是只写 `^0.2.0-rc.1`：只声明 0.2.x 会把仍在 0.1.x 宿主上的用户判成 `incompatible`；两段式同时覆盖 `0.1.0-rc.6` / `0.1.0-rc.8` / `0.1.1-rc.2` / `0.2.0-rc.2` / `0.2.1-alpha.4`。**日后两条线若不可兼得，以 0.2.x 为准，放弃 0.1.x。**
+
+### Notes
+
+- 运行时代码零改动：`lib/` 与 1.2.4 逐字节相同。
+- 实测证据（宿主 `0.2.0-rc.2`，验收工具为仓库外的 `verify-compat.mjs`，判定直接复用 dshmarket 自己的函数）：改前 `unknown` → 改后 `compatible`；`profiles/web` 体检本插件无 peer 警告；88 项单测全绿。
+
+### Release
+
+- npm：`dsh-panda-calendar@1.2.5`
+- GitHub：https://github.com/runcat-tommy/dsh-panda-calendar
+
 ## [1.2.4] - 2026-09-11
 
 ### Changed
